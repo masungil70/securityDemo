@@ -1,16 +1,21 @@
 package kr.or.kosa.config.jwt;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,9 +29,11 @@ import kr.or.kosa.config.auth.PrincipalDetails;
 import kr.or.kosa.dto.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
 
+//MVC -> 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 
+	//private AuthenticationManager authenticationManager;
 	private final AuthenticationManager authenticationManager;
 	
 	// Authentication 객체 만들어서 리턴 => 의존 : AuthenticationManager
@@ -36,8 +43,23 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			throws AuthenticationException {
 		
 		System.out.println("JwtAuthenticationFilter : 진입");
+
 		
-		// request에 있는 username과 password를 파싱해서 자바 Object로 받기
+//		request에 있는 username과 password를 파싱해서 자바 Object로 받기
+//		FileInputStream in = new FileInputStream("파일명");
+//		in.read();
+		
+//		InputStream in = request.getInputStream();
+//		int length = in.available();
+//		byte [] buffer = new byte[length];
+//		in.read(buffer);
+//		String data = new String(buffer);
+//		JSONObject obj = JSONObject.parse(data);
+//		LoginRequestDto loginRequestDto = new LoginRequestDto();
+//		loginRequestDto.setUsername(obj.get("username"));
+//		loginRequestDto.setPassword(obj.get("password"));
+//
+//      위 코드를 아래와 같이 하면 좀더 쉽게 구현 할 수 있음 		
 		ObjectMapper om = new ObjectMapper();
 		LoginRequestDto loginRequestDto = null;
 		try {
@@ -67,7 +89,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		Authentication authentication = authenticationManager.authenticate(authenticationToken);
 		
 		PrincipalDetails principalDetailis = (PrincipalDetails) authentication.getPrincipal();
-		System.out.println("Authentication : "+principalDetailis.getUser());
+		System.out.println("Authentication : "+principalDetailis.getUser().getUsername());
 		return authentication;
 	}
 

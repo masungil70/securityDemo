@@ -36,6 +36,8 @@ public class SecurityConfig {
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable);
 		
+		AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+		System.out.println("authenticationManager->"+authenticationManager);
 		//세션 정책 상수 설정
 		/*
 		 SessionCreationPolicy.ALWAYS      - 스프링시큐리티가 항상 세션을 생성
@@ -49,15 +51,15 @@ public class SecurityConfig {
 			.httpBasic(AbstractHttpConfigurer::disable);
 			
 		http.apply(new MyCustomDsl());// 커스텀 필터 등록
-		
+
 		http.authorizeHttpRequests(authroize -> 
 			authroize.requestMatchers("/api/v1/user/**")
 			.hasAnyAuthority("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN") //여러개의 권한 중 하나라도 있으면 성공 
 			.requestMatchers("/api/v1/manager/**")
 			.hasAnyAuthority("ROLE_MANAGER","ROLE_ADMIN")
 			.requestMatchers("/api/v1/admin/**")
-			.hasAuthority("ROLE_ADMIN") //반드시 해당 권한만 허가  
-			.anyRequest().permitAll()
+			.hasAnyAuthority("ROLE_ADMIN") //반드시 해당 권한만 허가  
+			.anyRequest().permitAll() // /home url은 비회원이 사용할 수 있음 
 		);
 		
 		return http.build();
@@ -66,11 +68,14 @@ public class SecurityConfig {
 	public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
+			
 			AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-			http
-					.addFilter(corsConfig.corsFilter())
-					.addFilter(new JwtAuthenticationFilter(authenticationManager))
-					.addFilter(new JwtAuthorizationFilter(authenticationManager, userRepository));
+			http.addFilter(corsConfig.corsFilter())
+				//로그인 후 토큰을 발급하는 필더 
+				.addFilter(new JwtAuthenticationFilter(authenticationManager))
+				//발급된 토큰를 전달 받아 실행되는 URL 전에 
+				//토큰을 이용하여 인증 객체를 생성하여 설정함 
+				.addFilter(new JwtAuthorizationFilter(authenticationManager, userRepository));
 		}
 	}
 

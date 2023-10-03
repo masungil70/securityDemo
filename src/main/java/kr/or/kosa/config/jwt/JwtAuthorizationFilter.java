@@ -63,7 +63,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		if (username != null) {
 			//사용자이름을 이용하여 실제 사용자의 정보를 얻는다
 			Users user = userRepository.findByUsername(username);
-
+			
 			// 인증은 토큰 검증시 끝. 인증을 하기 위해서가 아닌 스프링 시큐리티가 수행해주는 권한 처리를 위해
 			// 아래와 같이 사용자 객체를 이용하여 Authentication 객체를 만들어 
 			// 스프링 시큐리티 관리자에 등록한다 
@@ -71,7 +71,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			Authentication authentication = new UsernamePasswordAuthenticationToken(
 					principalDetails, // 나중에 컨트롤러에서 DI해서 쓸 때 사용하기 편함.
 					null, // 토큰 인증시 패스워드는 알수 없어 null 값을 전달하는 것임  
-					principalDetails.getAuthorities()); //사용가 소요한 인가 권한을 전달한다 
+					principalDetails.getAuthorities()); //사용자가 소유한 역할 권한을 전달한다 
 
 			// 강제로 시큐리티의 세션에 접근하여 값 저장
 			SecurityContextHolder.getContext().setAuthentication(authentication);

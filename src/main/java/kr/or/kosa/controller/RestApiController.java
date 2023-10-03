@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
-@CrossOrigin // CORS 허용
+@CrossOrigin("http://localhost:3000") // CORS 허용
 public class RestApiController {
 
 	private final UserRepository userRepository;
@@ -62,7 +62,7 @@ public class RestApiController {
 	@PostMapping("join")
 	public String join(@RequestBody Users user) {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-		user.setRoles("ROLE_USER");
+		user.setRoles("ROLE_USER,ROLE_MANAGER");
 		userRepository.save(user);
 		return "회원가입완료";
 	}
@@ -74,14 +74,14 @@ public class RestApiController {
  테스팅 하는 방법 
  
 모든 사람이 접근 가능
-curl -v http://localhost:8080/api/v1/home
+curl -v http://localhost:8090/api/v1/home
 
 회원가입완료
-curl -X POST  -H "content-type: application/json" -d "{\"username\":\"masungil\",\"password\":\"1234\"}" http://localhost:8080/api/v1/join
+curl -v -X POST  -H "content-type: application/json" -d "{\"id\":10,\"username\":\"masungil\",\"password\":\"1234\"}" http://localhost:8090/api/v1/join
 
 로그인
-curl -v -X POST  -d "{\"username\":\"masungil\",\"password\":\"1234\"}" http://localhost:8080/login
+curl -v -X POST  -d "{\"username\":\"masungil\",\"password\":\"1234\"}" http://localhost:8090/login
 
 유저 혹은 매니저 혹은 어드민이 접근 가능
-curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJtYXN1bmdpbCIsImV4cCI6MTY5MTI2NTU0NH0.dy5GnxVc5I3HabW6TXApt3jMmmP9i7wxvezzO6fFqmE" http://localhost:8080/api/v1/user
+curl -v -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAsInVzZXJuYW1lIjoibWFzdW5naWwiLCJleHAiOjE2OTA0NDIzOTV9.wN9iaOPV8pc0Z_YqkaUAdCj3SPXi6N336J116jqXbww" http://localhost:8090/api/v1/user
 */

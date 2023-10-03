@@ -19,10 +19,6 @@ public class PrincipalDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		System.out.println("PrincipalDetailsService : 진입");
 		Users user = userRepository.findByUsername(username);
-		if (user == null) {
-			throw new UsernameNotFoundException(username + " 계정이 존재하지 않습니다");
-		}
-		System.out.println("PrincipalDetailsService : user = " + user);
 
 		//세션을 사용할때는 아래 코드 사용하여 추가함 
 		// session.setAttribute("loginUser", user);

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.dao.TodoDAO">
+	<resultMap id="TodoMap" type="TodoVO">
+		<result column="id"          property="id"       jdbcType="INTEGER"   javaType="Integer"/>
+		<result column="title"       property="title"    jdbcType="VARCHAR"   javaType="String"/>
+		<result column="checked_yn"  property="checked"  jdbcType="CHAR"      javaType="Boolean"/>
+		<result column="reg_date"    property="reg_date" jdbcType="TIMESTAMP" javaType="String"/>
+		<result column="mod_date"    property="mod_date" jdbcType="TIMESTAMP" javaType="String"/>
+	</resultMap>
+
+	<insert id="insert" parameterType="TodoVO">
+	<!--  mariadb  
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID() id
+		</selectKey>
+		insert into TODO (
+			title, 
+			checked
+		) values (
+			#{title}, 
+			'F'
+		) 		
+	-->		
+
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select 
+				TODO_SEQ.nextval id 
+			from dual
+		</selectKey>
+		insert into TODO (
+			id,
+			title, 
+			checked_yn
+		) values (
+			#{id},
+			#{title}, 
+			#{checked_yn}
+		) 		
+	</insert>
+	
+	<select id="todoList" resultMap="TodoMap">
+		select 
+			id, 
+			title,
+			case checked_yn when 'N' then 0 else 1 end checked_yn,
+			TO_CHAR(reg_date, 'YYYY-MM-DD HH24:MI:SS') regDate 
+		from TODO
+		where DELETE_YN = 'N'
+	</select>
+
+	<select id="todoList2" resultType="TodoVO">
+		select 
+			id, 
+			title,
+			case checked_yn when 'N' then 0 else 1 end checked,
+			TO_CHAR(reg_date, 'YYYY-MM-DD HH24:MI:SS') regDate 
+		from TODO
+		where DELETE_YN = 'N'
+	</select>
+	
+	<update id="update" >
+		update TODO set 
+			<if test="title != null and title != ''">
+				title   = #{title}, 
+			</if>
+			<if test="checked_yn != null and checked_yn != ''">
+				checked_yn = #{checked_yn},
+			</if>
+			mod_date = sysdate
+		where id = #{id}
+	</update>
+	 
+	<update id="delete" >
+		update TODO set 
+			delete_date = sysdate,
+			delete_yn   = 'Y'
+		where id = #{id}
+	</update>
+</mapper>
