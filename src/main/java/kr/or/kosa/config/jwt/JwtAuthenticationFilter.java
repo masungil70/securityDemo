@@ -14,6 +14,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
@@ -86,11 +88,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// 인증 프로바이더의 디폴트 서비스는 UserDetailsService 타입
 		// 인증 프로바이더의 디폴트 암호화 방식은 BCryptPasswordEncoder
 		// 결론은 인증 프로바이더에게 알려줄 필요가 없음.
-		Authentication authentication = authenticationManager.authenticate(authenticationToken);
-		
-		PrincipalDetails principalDetailis = (PrincipalDetails) authentication.getPrincipal();
-		System.out.println("Authentication : "+principalDetailis.getUser().getUsername());
-		return authentication;
+		return authenticationManager.authenticate(authenticationToken);
+//		//강제로 인증정보 설정 
+//		SecurityContextHolder.getContext().setAuthentication(authentication);
+//		
+//		
+//		PrincipalDetails principalDetailis = (PrincipalDetails) authentication.getPrincipal();
+//		System.out.println("Authentication : "+principalDetailis.getUser().getUsername());
+//		return authentication;
 	}
 
 	// JWT Token 생성해서 response에 담아주기

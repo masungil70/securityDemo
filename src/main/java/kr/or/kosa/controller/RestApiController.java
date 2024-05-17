@@ -62,7 +62,7 @@ public class RestApiController {
 	@PostMapping("join")
 	public String join(@RequestBody Users user) {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-		user.setRoles("ROLE_USER,ROLE_MANAGER");
+		user.setRoles("ROLE_USER");
 		userRepository.save(user);
 		return "회원가입완료";
 	}
@@ -83,5 +83,5 @@ curl -v -X POST  -H "content-type: application/json" -d "{\"id\":10,\"username\"
 curl -v -X POST  -d "{\"username\":\"masungil\",\"password\":\"1234\"}" http://localhost:8090/login
 
 유저 혹은 매니저 혹은 어드민이 접근 가능
-curl -v -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAsInVzZXJuYW1lIjoibWFzdW5naWwiLCJleHAiOjE2OTA0NDIzOTV9.wN9iaOPV8pc0Z_YqkaUAdCj3SPXi6N336J116jqXbww" http://localhost:8090/api/v1/user
+curl -v -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAsInVzZXJuYW1lIjoibWFzdW5naWwiLCJleHAiOjE3MTU5MTAzMTR9.DtQKTN4KsqhHQBybcUHFj8YyeSIJKE3yIuZg6G5rEco" http://localhost:8090/api/v1/user
 */

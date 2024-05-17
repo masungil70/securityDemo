@@ -51,7 +51,7 @@ public class SecurityConfig {
 			.httpBasic(AbstractHttpConfigurer::disable);
 			
 		http.apply(new MyCustomDsl());// 커스텀 필터 등록
-
+		
 		http.authorizeHttpRequests(authroize -> 
 			authroize.requestMatchers("/api/v1/user/**")
 			.hasAnyAuthority("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN") //여러개의 권한 중 하나라도 있으면 성공 
@@ -70,6 +70,7 @@ public class SecurityConfig {
 		public void configure(HttpSecurity http) throws Exception {
 			
 			AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+			System.out.println("사용자 필더 설정 부분 authenticationManager->"+authenticationManager);
 			http.addFilter(corsConfig.corsFilter())
 				//로그인 후 토큰을 발급하는 필더 
 				.addFilter(new JwtAuthenticationFilter(authenticationManager))
